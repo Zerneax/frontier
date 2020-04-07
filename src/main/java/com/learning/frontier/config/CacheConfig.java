@@ -18,7 +18,8 @@ public class CacheConfig {
         SimpleCacheManager simpleCacheManager = new SimpleCacheManager();
         simpleCacheManager.setCaches(Arrays.asList(
                 new CaffeineCache("account", caffeineCacheBuilder(100, 1000, 10).build()),
-                new CaffeineCache("token", caffeineCacheBuilder(100, 1000, 2).build())
+                new CaffeineCache("token", caffeineCacheBuilder(100, 1000, 5).build()),
+                new CaffeineCache("autorisation", caffeineCacheBuilder(100, 1000, 10).build())
         ));
 
         return simpleCacheManager;

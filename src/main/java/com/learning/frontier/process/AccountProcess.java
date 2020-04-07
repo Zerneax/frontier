@@ -54,6 +54,19 @@ public class AccountProcess {
         return false;
     }
 
+    public boolean checkIfClientIdIsCorrect(String application, String scope, String clientId) {
+        Cache cache = this.cacheManager.getCache("account");
+        if(cache != null ) {
+            NewAccountOutput newAccountOutput =  cache.get(
+                    Arrays.asList(application, scope),
+                    NewAccountOutput.class
+                );
+
+            return newAccountOutput.getClientId().equals(clientId);
+        }
+        return false;
+    }
+
     public String generateClientSecret() {
         byte[] randomByte = new byte[24];
         this.secureRandom.nextBytes(randomByte);
