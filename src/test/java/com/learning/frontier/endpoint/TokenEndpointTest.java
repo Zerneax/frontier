@@ -31,6 +31,8 @@ public class TokenEndpointTest {
     public void shouldTestGetToken_200() {
         Mockito.doReturn(new TokenOutput()).when(this.tokenProcess).getToken(Mockito.anyString(), Mockito.anyString());
         Mockito.doReturn(true).when(this.accountProcess).checkIfAccountAlredyExist(Mockito.anyString());
+        Mockito.doReturn(true).when(this.accountProcess).checkIfClientIdIsCorrect(Mockito.anyString(), Mockito.anyString());
+        Mockito.doReturn(true).when(this.accountProcess).checkIfClientSecretIsCorrect(Mockito.anyString(), Mockito.anyString());
 
         ResponseEntity responseEntity = this.tokenEndpoint.getToken(this.mockFormData_ok());
 

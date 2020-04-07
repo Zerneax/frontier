@@ -66,6 +66,19 @@ public class AccountProcess {
         return false;
     }
 
+    public boolean checkIfClientSecretIsCorrect(String application, String clientSecret) {
+        Cache cache = this.cacheManager.getCache("account");
+        if(cache != null ) {
+            NewAccountOutput newAccountOutput =  cache.get(
+                    Arrays.asList(application),
+                    NewAccountOutput.class
+            );
+
+            return newAccountOutput.getClientSecret().equals(clientSecret);
+        }
+        return false;
+    }
+
     public String generateClientSecret() {
         byte[] randomByte = new byte[24];
         this.secureRandom.nextBytes(randomByte);

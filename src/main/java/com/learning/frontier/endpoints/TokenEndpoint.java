@@ -47,6 +47,24 @@ public class TokenEndpoint {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestErrorNotFound);
         }
 
+        if(!this.accountProcess.checkIfClientIdIsCorrect(formData.getFirst(this.APPLICATION_PARAM), formData.getFirst(this.CLIENT_ID_PARAM))) {
+            RequestError requestErrorNotFound = RequestError.builder()
+                    .httpStatus(HttpStatus.NOT_FOUND.toString())
+                    .message("ClientId/ClientSecret doesn't exist")
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestErrorNotFound);
+        }
+
+        if(!this.accountProcess.checkIfClientSecretIsCorrect(formData.getFirst(this.APPLICATION_PARAM), formData.getFirst(this.CLIENT_SECRET_PARAM))) {
+            RequestError requestErrorNotFound = RequestError.builder()
+                    .httpStatus(HttpStatus.NOT_FOUND.toString())
+                    .message("ClientId/ClientSecret doesn't exist")
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestErrorNotFound);
+        }
+
         String clientId = formData.getFirst(this.CLIENT_ID_PARAM);
         String scope = formData.getFirst(this.SCOPE_PARAM);
 
