@@ -38,10 +38,10 @@ public class TokenEndpoint {
             return ResponseEntity.badRequest().body(requestError);
         }
 
-        if(!this.accountProcess.checkIfAccountAlredyExist(formData.getFirst(this.APPLICATION_PARAM), formData.getFirst(this.SCOPE_PARAM))) {
+        if(!this.accountProcess.checkIfAccountAlredyExist(formData.getFirst(this.APPLICATION_PARAM))) {
             RequestError requestErrorNotFound = RequestError.builder()
                     .httpStatus(HttpStatus.NOT_FOUND.toString())
-                    .message("Application or scope don't exist")
+                    .message("Application don't exist")
                     .build();
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestErrorNotFound);

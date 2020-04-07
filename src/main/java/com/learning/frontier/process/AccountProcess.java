@@ -26,13 +26,12 @@ public class AccountProcess {
 
     @Cacheable(
             value = "account",
-            key = "{#newAccountInput.application, #newAccountInput.scope}",
+            key = "{#newAccountInput.application}",
             unless = "#return != null"
     )
     public NewAccountOutput createNewAccount(NewAccountInput newAccountInput) {
         return NewAccountOutput.builder()
                 .application(newAccountInput.getApplication())
-                .scope(newAccountInput.getScope())
                 .clientId(UUID.randomUUID().toString())
                 .clientSecret(this.generateClientSecret())
                 .build();
@@ -40,25 +39,25 @@ public class AccountProcess {
 
     /**
      * Check if an account is already register in cache
-     * @param String application, String scope
+     * @param String application
      * @return true if account already register else false
      */
-    public boolean checkIfAccountAlredyExist(String application, String scope) {
+    public boolean checkIfAccountAlredyExist(String application) {
         Cache cache = this.cacheManager.getCache("account");
         if(cache != null ) {
             return cache.get(
-                    Arrays.asList(application, scope),
+                    Arrays.asList(application),
                     NewAccountOutput.class
             ) != null;
         }
         return false;
     }
 
-    public boolean checkIfClientIdIsCorrect(String application, String scope, String clientId) {
+    public boolean checkIfClientIdIsCorrect(String application, String clientId) {
         Cache cache = this.cacheManager.getCache("account");
         if(cache != null ) {
             NewAccountOutput newAccountOutput =  cache.get(
-                    Arrays.asList(application, scope),
+                    Arrays.asList(application),
                     NewAccountOutput.class
                 );
 

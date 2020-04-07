@@ -30,7 +30,7 @@ public class AccountEndpoint {
             return ResponseEntity.badRequest().body(requestError);
         }
 
-        if (this.accountProcess.checkIfAccountAlredyExist(newAccountInput.getApplication(), newAccountInput.getScope())) {
+        if (this.accountProcess.checkIfAccountAlredyExist(newAccountInput.getApplication())) {
             RequestError requestErrorExisting = RequestError.builder()
                     .httpStatus(HttpStatus.CONFLICT.toString())
                     .message("An account is already register for this application and this scope")
@@ -55,13 +55,6 @@ public class AccountEndpoint {
             return RequestError.builder()
                     .httpStatus(HttpStatus.BAD_REQUEST.toString())
                     .message("Parameter 'application' is required")
-                    .build();
-        }
-
-        if(newAccountInput.getScope() == null || StringUtils.isEmpty(newAccountInput.getScope())) {
-            return RequestError.builder()
-                    .httpStatus(HttpStatus.BAD_REQUEST.toString())
-                    .message("Parameter 'scope' is required")
                     .build();
         }
 

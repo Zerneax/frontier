@@ -29,14 +29,12 @@ public class AccountProcessTest {
     public void shouldTestCreateNewAccount() {
         NewAccountInput newAccountInput = NewAccountInput.builder()
                 .application("application")
-                .scope("scope")
                 .build();
 
         NewAccountOutput newAccountOutput = this.accountProcess.createNewAccount(newAccountInput);
 
         Assertions.assertNotNull(newAccountOutput);
         Assertions.assertEquals("application", newAccountOutput.getApplication());
-        Assertions.assertEquals("scope", newAccountOutput.getScope());
         Assertions.assertNotEquals("", newAccountOutput.getClientId());
         Assertions.assertNotEquals("", newAccountOutput.getClientSecret());
     }
@@ -46,10 +44,9 @@ public class AccountProcessTest {
         Mockito.doReturn(null).when(this.cacheManager).getCache(Mockito.anyString());
         NewAccountInput newAccountInput = NewAccountInput.builder()
                 .application("application")
-                .scope("scope")
                 .build();
 
-        Assertions.assertFalse(this.accountProcess.checkIfAccountAlredyExist(newAccountInput.getApplication(), newAccountInput.getScope()));
+        Assertions.assertFalse(this.accountProcess.checkIfAccountAlredyExist(newAccountInput.getApplication()));
     }
 
     @Test
@@ -57,10 +54,9 @@ public class AccountProcessTest {
         Mockito.doReturn(this.mockCacheAccountDoesntExist()).when(this.cacheManager).getCache(Mockito.anyString());
         NewAccountInput newAccountInput = NewAccountInput.builder()
                 .application("application")
-                .scope("scope")
                 .build();
 
-        Assertions.assertFalse(this.accountProcess.checkIfAccountAlredyExist(newAccountInput.getApplication(), newAccountInput.getScope()));
+        Assertions.assertFalse(this.accountProcess.checkIfAccountAlredyExist(newAccountInput.getApplication()));
     }
 
     /*@Test

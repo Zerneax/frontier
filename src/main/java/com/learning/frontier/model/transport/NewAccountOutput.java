@@ -13,6 +13,5 @@ public class NewAccountOutput {
 
     private String clientId;
     private String clientSecret;
-    private String scope;
     private String application;
 }

@@ -12,5 +12,4 @@ import lombok.NoArgsConstructor;
 public class NewAccountInput {
 
     private String application;
-    private String scope;
 }

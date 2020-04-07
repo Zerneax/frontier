@@ -29,7 +29,7 @@ public class AutorisationEndpoint {
             return ResponseEntity.badRequest().body(requestError);
         }
 
-        if(!this.accountProcess.checkIfAccountAlredyExist(newAutorisationInput.getApplication(), newAutorisationInput.getScope())) {
+        if(!this.accountProcess.checkIfAccountAlredyExist(newAutorisationInput.getApplication())) {
           RequestError requestError1 = RequestError.builder()
             .httpStatus(HttpStatus.NOT_FOUND.toString())
             .message("This application/scope don't exit")
@@ -38,7 +38,7 @@ public class AutorisationEndpoint {
           return ResponseEntity.status(HttpStatus.NOT_FOUND).body(requestError1);
         }
 
-        if(!this.accountProcess.checkIfClientIdIsCorrect(newAutorisationInput.getApplication(), newAutorisationInput.getScope(), newAutorisationInput.getClientId())) {
+        if(!this.accountProcess.checkIfClientIdIsCorrect(newAutorisationInput.getApplication(), newAutorisationInput.getClientId())) {
             RequestError requestError2 = RequestError.builder()
                     .httpStatus(HttpStatus.NOT_FOUND.toString())
                     .message("This clientId doesn't exit")
