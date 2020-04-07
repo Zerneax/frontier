@@ -49,7 +49,7 @@ public class AccountProcessTest {
                 .scope("scope")
                 .build();
 
-        Assertions.assertFalse(this.accountProcess.checkIfAccountAlredyExist(newAccountInput));
+        Assertions.assertFalse(this.accountProcess.checkIfAccountAlredyExist(newAccountInput.getApplication(), newAccountInput.getScope()));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class AccountProcessTest {
                 .scope("scope")
                 .build();
 
-        Assertions.assertFalse(this.accountProcess.checkIfAccountAlredyExist(newAccountInput));
+        Assertions.assertFalse(this.accountProcess.checkIfAccountAlredyExist(newAccountInput.getApplication(), newAccountInput.getScope()));
     }
 
     /*@Test

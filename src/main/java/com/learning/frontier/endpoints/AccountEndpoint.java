@@ -30,7 +30,7 @@ public class AccountEndpoint {
             return ResponseEntity.badRequest().body(requestError);
         }
 
-        if (this.accountProcess.checkIfAccountAlredyExist(newAccountInput)) {
+        if (this.accountProcess.checkIfAccountAlredyExist(newAccountInput.getApplication(), newAccountInput.getScope())) {
             RequestError requestErrorExisting = RequestError.builder()
                     .httpStatus(HttpStatus.CONFLICT.toString())
                     .message("An account is already register for this application and this scope")

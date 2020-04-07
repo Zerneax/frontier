@@ -3,6 +3,7 @@ package com.learning.frontier.endpoint;
 import com.learning.frontier.endpoints.TokenEndpoint;
 import com.learning.frontier.model.error.RequestError;
 import com.learning.frontier.model.transport.TokenOutput;
+import com.learning.frontier.process.AccountProcess;
 import com.learning.frontier.process.TokenProcess;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,16 +18,19 @@ public class TokenEndpointTest {
 
     private TokenProcess tokenProcess;
     private TokenEndpoint tokenEndpoint;
+    private AccountProcess accountProcess;
 
     @BeforeEach
     public void setUp() {
         this.tokenProcess = Mockito.mock(TokenProcess.class);
-        this.tokenEndpoint = new TokenEndpoint(this.tokenProcess);
+        this.accountProcess = Mockito.mock(AccountProcess.class);
+        this.tokenEndpoint = new TokenEndpoint(this.tokenProcess, accountProcess);
     }
 
     @Test
     public void shouldTestGetToken_200() {
-        Mockito.doReturn(new TokenOutput()).when(this.tokenProcess).getToken(Mockito.anyString());
+        Mockito.doReturn(new TokenOutput()).when(this.tokenProcess).getToken(Mockito.anyString(), Mockito.anyString());
+        Mockito.doReturn(true).when(this.accountProcess).checkIfAccountAlredyExist(Mockito.anyString(), Mockito.anyString());
 
         ResponseEntity responseEntity = this.tokenEndpoint.getToken(this.mockFormData_ok());
 
@@ -36,7 +40,7 @@ public class TokenEndpointTest {
 
     @Test
     public void shouldTestGetToken_400_formData_invalid() {
-        Mockito.doReturn(new TokenOutput()).when(this.tokenProcess).getToken(Mockito.anyString());
+        Mockito.doReturn(new TokenOutput()).when(this.tokenProcess).getToken(Mockito.anyString(), Mockito.anyString());
 
         ResponseEntity responseEntity = this.tokenEndpoint.getToken(null);
 
@@ -51,7 +55,7 @@ public class TokenEndpointTest {
 
     @Test
     public void shouldTestGetToken_400_clientId_invalid() {
-        Mockito.doReturn(new TokenOutput()).when(this.tokenProcess).getToken(Mockito.anyString());
+        Mockito.doReturn(new TokenOutput()).when(this.tokenProcess).getToken(Mockito.anyString(), Mockito.anyString());
 
         ResponseEntity responseEntity = this.tokenEndpoint.getToken(this.mockFormData_clientId_missing());
 
@@ -76,7 +80,7 @@ public class TokenEndpointTest {
 
     @Test
     public void shouldTestGetToken_400_clientSecret_invalid() {
-        Mockito.doReturn(new TokenOutput()).when(this.tokenProcess).getToken(Mockito.anyString());
+        Mockito.doReturn(new TokenOutput()).when(this.tokenProcess).getToken(Mockito.anyString(), Mockito.anyString());
 
         ResponseEntity responseEntity = this.tokenEndpoint.getToken(this.mockFormData_clientSecret_missing());
 
@@ -101,7 +105,32 @@ public class TokenEndpointTest {
 
     @Test
     public void shouldTestGetToken_400_scope_invalid() {
-        Mockito.doReturn(new TokenOutput()).when(this.tokenProcess).getToken(Mockito.anyString());
+        Mockito.doReturn(new TokenOutput()).when(this.tokenProcess).getToken(Mockito.anyString(), Mockito.anyString());
+
+        ResponseEntity responseEntity = this.tokenEndpoint.getToken(this.mockFormData_scope_missing());
+
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+
+        RequestError requestError = (RequestError) responseEntity.getBody();
+        Assertions.assertNotNull(requestError);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST.toString(), requestError.getHttpStatus());
+        Assertions.assertEquals("Parameter 'scope' is required",  requestError.getMessage());
+
+        responseEntity = this.tokenEndpoint.getToken(this.mockFormData_scope_moreThanOne());
+
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+
+        requestError = (RequestError) responseEntity.getBody();
+        Assertions.assertNotNull(requestError);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST.toString(), requestError.getHttpStatus());
+        Assertions.assertEquals("Parameter 'scope' must be unique",  requestError.getMessage());
+    }
+
+    @Test
+    public void shouldTestGetToken_400_application_invalid() {
+        Mockito.doReturn(new TokenOutput()).when(this.tokenProcess).getToken(Mockito.anyString(), Mockito.anyString());
 
         ResponseEntity responseEntity = this.tokenEndpoint.getToken(this.mockFormData_scope_missing());
 
@@ -130,6 +159,7 @@ public class TokenEndpointTest {
         multiValueMap.add("clientId", "testId");
         multiValueMap.add("clientSecret", "testSecret");
         multiValueMap.add("scope", "testScope");
+        multiValueMap.add("application", "testApplication");
 
         return multiValueMap;
     }
@@ -138,6 +168,7 @@ public class TokenEndpointTest {
         MultiValueMap<String, String>  multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("clientSecret", "testSecret");
         multiValueMap.add("scope", "testScope");
+        multiValueMap.add("application", "testApplication");
 
         return multiValueMap;
     }
@@ -149,6 +180,7 @@ public class TokenEndpointTest {
         multiValueMap.add("clientId", "test2Id");
         multiValueMap.add("clientSecret", "testSecret");
         multiValueMap.add("scope", "testScope");
+        multiValueMap.add("application", "testApplication");
 
         return multiValueMap;
     }
@@ -157,6 +189,7 @@ public class TokenEndpointTest {
         MultiValueMap<String, String>  multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("clientId", "testId");
         multiValueMap.add("scope", "testScope");
+        multiValueMap.add("application", "testApplication");
 
         return multiValueMap;
     }
@@ -168,6 +201,7 @@ public class TokenEndpointTest {
         multiValueMap.add("clientSecret", "testSecret");
         multiValueMap.add("clientSecret", "test2Secret");
         multiValueMap.add("scope", "testScope");
+        multiValueMap.add("application", "testApplication");
 
         return multiValueMap;
     }
@@ -176,6 +210,7 @@ public class TokenEndpointTest {
         MultiValueMap<String, String>  multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("clientId", "testId");
         multiValueMap.add("clientSecret", "testSecret");
+        multiValueMap.add("application", "testApplication");
 
         return multiValueMap;
     }
@@ -187,6 +222,27 @@ public class TokenEndpointTest {
         multiValueMap.add("clientSecret", "testSecret");
         multiValueMap.add("scope", "testScope");
         multiValueMap.add("scope", "test2Scope");
+        multiValueMap.add("application", "testApplication");
+
+        return multiValueMap;
+    }
+
+    private MultiValueMap<String, String> mockFormData_application_missing() {
+        MultiValueMap<String, String>  multiValueMap = new LinkedMultiValueMap<>();
+        multiValueMap.add("clientId", "testId");
+        multiValueMap.add("clientSecret", "testSecret");
+        multiValueMap.add("scope", "testSscope");
+        return multiValueMap;
+    }
+
+
+    private MultiValueMap<String, String> mockFormData_application_moreThanOne() {
+        MultiValueMap<String, String>  multiValueMap = new LinkedMultiValueMap<>();
+        multiValueMap.add("clientId", "testId");
+        multiValueMap.add("clientSecret", "testSecret");
+        multiValueMap.add("scope", "testSscope");
+        multiValueMap.add("application", "testApplication");
+        multiValueMap.add("application", "test2Application");
 
         return multiValueMap;
     }

@@ -40,14 +40,14 @@ public class AccountProcess {
 
     /**
      * Check if an account is already register in cache
-     * @param newAccountInput
+     * @param String application, String scope
      * @return true if account already register else false
      */
-    public boolean checkIfAccountAlredyExist(NewAccountInput newAccountInput) {
+    public boolean checkIfAccountAlredyExist(String application, String scope) {
         Cache cache = this.cacheManager.getCache("account");
         if(cache != null ) {
             return cache.get(
-                    Arrays.asList(newAccountInput.getApplication(), newAccountInput.getScope()),
+                    Arrays.asList(application, scope),
                     NewAccountOutput.class
             ) != null;
         }
